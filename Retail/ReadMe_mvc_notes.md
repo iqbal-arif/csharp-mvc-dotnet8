@@ -155,4 +155,187 @@
 				<label asp-for="DisplayOrder" class="p-0"></label>
 				<input asp-for="DisplayOrder" class="form-control" />
 			</div>
+		[HttpPost] Method implementation
+		24. Adding HttpPost Method Attribute in CategoryController
+			[HttpPost]
+			[HttpPost]
+			 public IActionResult Create(Category obj)
+				{
+				_db.Categories.Add(obj);    // Keeping track of what needs to Add
+				_db.SaveChanges();          // Creates a Category in Db
+				return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
+				}
+		SEVER-SIDE VALIDATION
+		25. SeversSide Validation in CategoryController.cs	
+			a. First add validation in the properyt in MODEL Category.cs 
+				 public class Category
+				{
+					[Key]   
+					public int Id { get; set; }
+					[Required]
+					[MaxLength(30)] //Length Validation
+					[DisplayName("Category Name")]
+					public string Name { get; set; }
+
+					[DisplayName("Display Order")]
+					[Range(1,100, ErrorMessage ="Dispaly Order must be between 1-100")] // DisplayOrder Range Validation
+					public int DisplayOrder { get; set; }
+				}
+			b. Add VALIDATION MEDTOD in CONTROLLER CategoryController
+			
+				[HttpPost]
+				public IActionResult Create(Category obj)
+				{
+					if (ModelState.IsValid)
+					{
+						_db.Categories.Add(obj);    // Keeping track of what needs to Add
+						_db.SaveChanges();          // Creates a Category in Db
+						return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
+					}
+					return View();
+
+				}
+			c. Add TAG-HELPER in VIEWS of Category view Create.cs
+				<div class="mb-3 row p-1">
+					<label asp-for= "Name" class="p-0"></label>
+					<input asp-for= "Name" class="form-control"/>
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+				<div class="mb-3 row p-1">
+					<label asp-for="DisplayOrder" class="p-0"></label>
+					<input asp-for="DisplayOrder" class="form-control" />
+					<span asp-validation-for="DisplayOrder" class="text-danger"></span>
+				</div>
+		CUSTOM VALIDATION ERROR MESSAGE
+		26. Add VALIDATION in CONTROLLER CategoryController
+		1.
+		 [HttpPost]
+         public IActionResult Create(Category obj)
+         {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
+            }
+		2. ERROR MESSAGE SUMMARY
+			Add in VIEWS when Error message Summary is required
+			<div asp-validation-summary="All" class="text-bg-danger"></div>
+			asp-validation-summary other options are:
+			ModelOnly, None, and All
 		
+		CLIENT SIDE VALIDATION
+		27. User EF ValidationScriptPartial for Client Side VALIDATION
+			Use the Builtin snippet available in EF.
+			@section Scripts{
+				{
+					<partial name="_ValidationScriptsPartial" /> 
+				} 
+			}
+		
+		GET CATEGORY EDIT MODEL
+		28. ADD IActionResult METHOD IN CategoryController
+			1.
+			Adding a GE METHOD (Get Method is available by Default)
+				public IActionResult Edit(int? id)
+				{
+					if (id == null || id == 0)
+					{
+						return NotFound();
+						//Add an Error page for Enduser
+					}
+					Category? categoryFromDb = _db.Categories.Find(id); // Method-1: By ID only
+					// Method-2:First or Default Method
+					//Category? categoryFromDb1 = _db.Categories.FirstOrDefault(u => u.Id == id);
+					// Method-3:Link Operation
+					//Category? categoryFromDb2 = _db.Categories.Where( u => u.Id == id).FirstOrDefault(); 
+					if (categoryFromDb == null)
+					{
+						return NotFound();
+					}
+					return View(categoryFromDb);
+				}
+			[HttpPost]
+			 public IActionResult Edit(Category obj)
+			{
+
+				return View();
+
+			}
+			2. Retrive Category ID from Category INDEX View
+			<div class="w-75 btn-group" role="group">
+							<a asp-controller="Category" asp-action="Edit" asp-route-id = "@obj.Id" class="btn btn-primary mx-2">
+							<i class="bi bi-pencil-square"></i> Edit
+							</a>
+		
+		GET CATEGORY EDIT View
+		29. Adding Edit View page from CategoryController
+			1. Right Click on IActionResult Edit (Select Razor View)
+			2. Copy the content of Create View and Change the create to Edit and Update
+		
+		DELETE CATEGORY LIST from MODEL CategoryController
+		30. 
+			1. Add Delete IActionResult in CategoryController
+			2. Add A Delete View page
+			4. Add asp-route-id for Delete Action in Index View
+		
+		TEMPDATA TO DISPLAY ADD,UPDATE, & DELETE VALUES
+		31. 
+		1. Add TempData Operation in CategoryController
+		
+		if (ModelState.IsValid)
+            {
+                _db.Categories.Add(obj);    // Keeping track of what needs to Add
+                _db.SaveChanges();          // Creates a Category in Db
+                TempData["success"] = "Category Created successfully";
+                return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
+            }
+            return View();
+		2. To Display TempData["success"] add it to Index View.
+		@model List<Category>
+		// Add the following
+		@if (TempData["success"] != null)
+		{
+			<h2>@TempData["success"]</h2>
+		}
+		
+		ADDING THE TEMPDATA IN MULTIPLE Views
+		32. 
+			1. Create Partial View in Shared Folder with "_" undescore
+			2. Add the reusable code in shared View
+				@if (TempData["success"] != null)
+				{
+					<h4>@TempData["success"]</h4>
+				}
+
+				@if (TempData["error"] != null)
+				{
+					<h4>@TempData["error"]</h4>
+				}
+			3. Add the partial view usage in INDEX file
+			
+				@model List<Category>
+
+				<partial name="_Notification"/>
+		
+		33. ADDING FANCY LOOK TO NOTICFICATION
+			1. Go to Toastr site and get cdn link for css and js
+			2. Paste css in _Layout page
+			3. Add the Toastr code in _Notification page
+				@if (TempData["success"] != null)
+				{
+					<script src="~/lib/jquery/dist/jquery.min.js"></script>
+					<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+					<script type="text/javascript">
+						toastr.success('@TempData["success"]')
+					</script>
+				}
+
+				@if (TempData["error"] != null)
+				{
+					<script src="~/lib/jquery/dist/jquery.min.js"></script>
+					<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+					<script type="text/javascript">
+						toastr.success('@TempData["success"]')
+					</script>
+				}
+			4. 
+		34.
