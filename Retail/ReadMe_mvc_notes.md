@@ -339,3 +339,21 @@
 				}
 			4. 
 		34.
+		
+		
+		RETAIL RAZOR PAGE MODEL
+		
+		1. Create ASP.NET CORE RAZOR PAGE MODEL
+		2. Create "Model" folder & copy the content to  Category.cs file
+		3. Copy appsettings DB Connection and set a new DB Name.
+		4. Creaate "Data" folder & 
+		5. Copy or Create Nuget Package by copying it from MVC Model Project file to RAZOR Model Project file.
+			<ItemGroup>
+			<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+			<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
+			<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
+				<PrivateAssets>all</PrivateAssets>
+				<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			</PackageReference>
+			</ItemGroup>
+		6. 
