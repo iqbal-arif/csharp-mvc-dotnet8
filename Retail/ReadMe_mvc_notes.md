@@ -344,9 +344,10 @@
 		RETAIL RAZOR PAGE MODEL
 		
 		1. Create ASP.NET CORE RAZOR PAGE MODEL
+		DATABASE SETUP WITH CATEGORY AND LISTING
 		2. Create "Model" folder & copy the content to  Category.cs file
 		3. Copy appsettings DB Connection and set a new DB Name.
-		4. Creaate "Data" folder & 
+		4. Creaate "Data" folder & Create and Copy content of ApplicationDbContext file
 		5. Copy or Create Nuget Package by copying it from MVC Model Project file to RAZOR Model Project file.
 			<ItemGroup>
 			<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
@@ -356,4 +357,11 @@
 				<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			</PackageReference>
 			</ItemGroup>
-		6. 
+		6. Add migration in Retail_RazorPage MODEL	
+			add-migration AddCateoryTableToDb
+		7. Update the database
+			update-database
+		RAZOR PAGES SETUP
+		8. Create "Categories" folder and Empty Razor Page called "Index.cshtml"
+		9. Each page in Razor has a Model called "Index.cshtml.cs" as an example
+		10. Use [BindProperties] at Model level to bind all properties used in the Model.
