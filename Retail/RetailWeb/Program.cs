@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using RetailWeb.Data;
+using RetailWeb.DataAccess.Data;
 
 namespace RetailWeb
 {

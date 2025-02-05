@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using RetailWeb.Models;
+using Retail.Models;
 
 namespace RetailWeb.Controllers
 {

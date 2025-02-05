@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
-using RetailWeb.Data;
-using RetailWeb.Models;
+using Retail.Models;
+using RetailWeb.DataAccess.Data;
+
 
 namespace RetailWeb.Controllers
 {
