@@ -1,25 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
 using RetailWeb.DataAccess.Data;
 
 
-namespace RetailWeb.Controllers
+namespace RetailWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         // Field to retrieve db object
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryController(ApplicationDbContext db)
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
             //Retriving all the Categories list
-            List<Category> objCategoryList = _db.Categories.ToList();
+            List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objCategoryList);
         }
         //Action Method for Create Categry
@@ -28,7 +30,7 @@ namespace RetailWeb.Controllers
             return View();
         }
         [HttpPost]
-         public IActionResult Create(Category obj)
+        public IActionResult Create(Category obj)
         {
             if (obj.Name == obj.DisplayOrder.ToString())
             {
@@ -41,8 +43,8 @@ namespace RetailWeb.Controllers
 
             if (ModelState.IsValid)
             {
-                _db.Categories.Add(obj);    // Keeping track of what needs to Add
-                _db.SaveChanges();          // Creates a Category in Db
+                _unitOfWork.Category.Add(obj);    // Keeping track of what needs to Add
+                _unitOfWork.Save();          // Creates a Category in Db
                 TempData["success"] = "Category Created successfully";
                 return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
             }
@@ -56,11 +58,10 @@ namespace RetailWeb.Controllers
                 return NotFound();
                 //Add an Error page for Enduser
             }
-            Category? categoryFromDb = _db.Categories.Find(id); // Method-1: By ID only
             // Method-2:First or Default Method
-            //Category? categoryFromDb1 = _db.Categories.FirstOrDefault(u => u.Id == id);
             // Method-3:Link Operation
             //Category? categoryFromDb2 = _db.Categories.Where( u => u.Id == id).FirstOrDefault(); 
+            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id); // Method-1: By ID only
             if (categoryFromDb == null)
             {
                 return NotFound();
@@ -69,12 +70,13 @@ namespace RetailWeb.Controllers
         }
 
         [HttpPost]
-         public IActionResult Edit(Category obj)
+        public IActionResult Edit(Category obj)
         {
             if (ModelState.IsValid)
             {
-                _db.Categories.Update(obj);    // Keeping track of what needs to be updated
-                _db.SaveChanges();          // Updates a Category in Db
+                _unitOfWork.Category.Update(obj); ;    // Keeping track of what needs to be updated
+                _unitOfWork.Save();           // Updates a Category in Db
+
                 TempData["success"] = "Category Updated successfully";
 
                 return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
@@ -91,8 +93,9 @@ namespace RetailWeb.Controllers
                 return NotFound();
                 //Add an Error page for Enduser
             }
-            Category? categoryFromDb = _db.Categories.Find(id); // Method-1: By ID only
-             
+            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id); // Method-1: By ID only
+
+
             if (categoryFromDb == null)
             {
                 return NotFound();
@@ -103,13 +106,13 @@ namespace RetailWeb.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePOST(int? id)
         {
-            Category? obj = _db.Categories.Find(id);
+            Category? obj = _unitOfWork.Category.Get(u => u.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-            _db.Categories.Remove(obj);    // Keeping track of what needs to be deleted
-            _db.SaveChanges();          // Updates a Category in Db
+            _unitOfWork.Category.Remove(obj);    // Keeping track of what needs to be deleted
+            _unitOfWork.Save();          // Updates a Category in Db
             TempData["success"] = "Category Deleted successfully";
 
             return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method

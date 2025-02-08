@@ -1,0 +1,4 @@
+DEPENDENCY INJECTION SERVICE LIFETIMES
+1. Transient : - New Service - every time requested
+2. Scoped    : - New Service - once per requested
+3. Singleton : - New Service - once per application lifetime.

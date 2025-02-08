@@ -1,12 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using Retail.DataAccess.Repository.IRepository;
-using Retail.Models;
-using RetailWeb.DataAccess.Data;
-using RetailWeb;
-using Retail.DataAccess.Repository;
+using DI_Service_Lifetime.Services;
 
-
-namespace RetailWeb
+namespace DI_Service_Lifetime
 {
     public class Program
     {
@@ -16,11 +10,9 @@ namespace RetailWeb
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); /// Implementation of CategoryRepository
+            builder.Services.AddSingleton<ISingletonGuidService,SingletonGuidService>();
+            builder.Services.AddSingleton<ITransientGuidService,TransientGuidService>();
+            builder.Services.AddSingleton<IScopedGuidService,ScopedGuidService>();
 
             var app = builder.Build();
 
@@ -41,7 +33,7 @@ namespace RetailWeb
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

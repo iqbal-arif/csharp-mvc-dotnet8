@@ -13,7 +13,23 @@ RETAIL STORE WEB APP
 6. add-migration AddCategoryToDbAndSeedTable => Make sure you change the Default project to where the Data is sought from. In this case it is Retail.DataAccess
 7. update-database
 
-DEPENDENCY INJECTION SERVICE LIFETIMES
-1. Transient : - New Service - every time requested
-2. Scoped    : - New Service - once per requested
-3. Singleton : - New Service - once per application lifetime.
+4. IREPOSITROY INTERFACE: (where generic fields and methods are defined)
+5. Define genericIRepository Interface Class
+6. Define fields and methods (to perform CRUD operation or interact with DB)
+7. T  - CATEGORY
+	1. Get All Category  :IEnumerable<T> GetAll();
+	2. Get a single first Category : T Get(Expression<Func<T, bool>> filter); // Expression is a LINQ Operator
+	3. Add, Remove, RemoveRange Repository
+8. IMPLEMENTING IREPOSITROY;
+9. CATEGORY TO IMPLEMENT IREPOSITROY
+10.IMPLEMENTING CATEGORY Repository with base functionality and update and save features.
+11.NOTE: Remember to Register Service to Dependency Injection Life : Scoped, Singleton ,etc
+
+
+PRODUCCT Model
+1. Add Properties for product in Products.cs Model
+2. Enter Data Manually in ApplicationDbContext for testing purpose.
+3. Create Product Table in Database: 
+	add-migration addProductsToDb
+	update-database
+	
