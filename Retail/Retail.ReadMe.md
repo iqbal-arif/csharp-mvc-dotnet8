@@ -32,4 +32,29 @@ PRODUCCT Model
 3. Create Product Table in Database: 
 	add-migration addProductsToDb
 	update-database
-	
+
+PRODUCT CONTROLLER & ACTION METHOD
+// Ctrl+Shift+F (Find & Replace)
+// Alt+Shift+; Select every instance of same word
+//AltShift+. Select next same word
+
+CATEGORY and PRODUCCT RELATION
+1. public int CategoryId { get; set; }
+   [ForeignKey("CategoryId")]
+   public Category Category { get; set; }
+2. add-migration addForeignKeyForCategoryProductRelation  // to create relationship between 2 tables
+3. remove-migration // To remove last migration.
+4. add-migration AddCategoryToDbAndSeedTable
+5. add-migration addProductsToDb
+6. add-migration addForeignKeyForCategoryProductRelation
+7. update-database
+8. add-migration addImageUrlToProduct
+
+VIEWBAG ASP-ITEM (Expects IEnumerable of SelectListItem)
+	<div class="form-floating py-2 col-12">
+		<select asp-for="CategoryId" asp-items = "ViewBag.CategoryList" class="form-control boarder-0 shadow" >
+			<option disabled selected>--Select Cagtegory--</option>
+		</select>
+		<label asp-for="CategoryId" class="ms-2"></label>
+		<span asp-validation-for="CategoryId" class="text-danger"></span>
+	</div>
