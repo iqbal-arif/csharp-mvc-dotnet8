@@ -58,3 +58,34 @@ VIEWBAG ASP-ITEM (Expects IEnumerable of SelectListItem)
 		<label asp-for="CategoryId" class="ms-2"></label>
 		<span asp-validation-for="CategoryId" class="text-danger"></span>
 	</div>
+	
+VIEWMODEL (Model Specific for View)
+ 9. Create ViewModel in Retial.Models
+ 10. @using Retail.Models.ViewModels is where ProductVM is located. Add it to All _ViewImorts files
+ 11. ValidateNever Attribute for the properties that are not supposed to be validated
+ 12. ViewModels are specifically designed for strongly typed view. And this ViewModels are called "Strongly Typed View"
+ 
+ UPLOAD A FILE THROUGH PC
+ 13. Add enctype = "multipart/form-data" in the Form header fields
+ 14. file type="file" in the html tag
+
+COMBINING CREATE & EDIT PAGES FOR product
+15. Use Upsert METHOD in ProductController
+	public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+
+RICH TEXT EDITOR
+16. Integrate TinyMCE
+17. Insert CDN JavaScript tag in html
+18. Use TextEditor JavaScript Tag in Product View PAGES
+
+WEBHOSTENVIRONMENT TO ACCESS LOCAL FILES
+Inserting WebHostEnvironment to access Datafolder to access files loacally.
+
+		private readonly IUnitOfWork _unitOfWork;
+
+        private readonly IWebHostEnvironment _weHostEnironment;
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment weHostEnironment)
+        {
+            _unitOfWork = unitOfWork;
+            _weHostEnironment = weHostEnironment;
+        }
