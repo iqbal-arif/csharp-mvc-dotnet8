@@ -78,8 +78,9 @@ RICH TEXT EDITOR
 17. Insert CDN JavaScript tag in html
 18. Use TextEditor JavaScript Tag in Product View PAGES
 
-WEBHOSTENVIRONMENT TO ACCESS LOCAL FILES
-Inserting WebHostEnvironment to access Datafolder to access files loacally.
+IWEWHOSTENVIRONMENT TO ACCESS LOCAL FILES, a built-in .NET FEATURE
+
+19. Inserting WebHostEnvironment to access Datafolder to access files loacally.
 
 		private readonly IUnitOfWork _unitOfWork;
 
@@ -89,3 +90,8 @@ Inserting WebHostEnvironment to access Datafolder to access files loacally.
             _unitOfWork = unitOfWork;
             _weHostEnironment = weHostEnironment;
         }
+20. Access www Root Folder
+21. Get filename with extension
+22. Get file path and combine
+23. Copy the file
+24. Save the FILE

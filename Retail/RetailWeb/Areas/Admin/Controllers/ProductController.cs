@@ -12,21 +12,22 @@ namespace RetailWeb.Areas.Admin.Controllers
        
         private readonly IUnitOfWork _unitOfWork;
 
-        private readonly IWebHostEnvironment _weHostEnironment;
-        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment weHostEnironment)
+        //Injecting IWeHostEnvironment using Dependency Injection
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
-            _weHostEnironment = weHostEnironment;
+            _webHostEnvironment = webHostEnvironment;
         }
-        public ProductController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+        //public ProductController(IUnitOfWork unitOfWork)
+        //{
+        //    _unitOfWork = unitOfWork;
+        //}
 
         public IActionResult Index()
         {
             //Retriving all the Categories list
-            List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
             
             return View(objProductList); 
         }
@@ -68,7 +69,7 @@ namespace RetailWeb.Areas.Admin.Controllers
 
             if (id == null || id == 0)
             {
-                //Creat
+                //Create
                 return View(productVM);
 
             }
@@ -84,6 +85,7 @@ namespace RetailWeb.Areas.Admin.Controllers
 
 
         }
+
         [HttpPost]
         //public IActionResult Create(Product obj) // Relate to ViewBag & ViewData
         public IActionResult Upsert(ProductVM productVM, IFormFile? file)
@@ -93,15 +95,61 @@ namespace RetailWeb.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
 
-                //Checking file in the root folder
-                string wwwRootPath = _weHostEnironment.WebRootPath;
+                //Checking file in the root folder, WebRoothPath gives www root folder
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (file != null) 
                 { 
+                    //Creating a new filename and combining the extension of the actual uploaded fiel
                     string filename = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    //Gets the path of the file so we can define the location for file to be uploaded to
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
+
+                    //Checking if the Image is available
+                    if(!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                    {
+                        //Delete the Old Image
+                        var oldImagePath = Path.Combine(wwwRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
+
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    //Updating the Image if the Id is present
+                    if (productVM.Product.Id == 0)
+                    {
+                        _unitOfWork.Product.Add(productVM.Product);
+                    }
+                    else
+                    {
+                        _unitOfWork.Product.Update(productVM.Product);
+                    }
+
+
+                    //Copying the file
+                    using (var fileStream = new FileStream(Path.Combine(productPath,filename), FileMode.Create))
+                    {
+                            file.CopyTo(fileStream); // copying the file to FileStream
+                    }
+                    //Saving it to Product Image URL
+                    productVM.Product.ImageUrl = @"\images\product\" + filename;
+
                 }
 
-                _unitOfWork.Product.Add(productVM.Product);    // Keeping track of what needs to Add
+                //Another way of Checking the Id and comparing it with the Database Id
+                //var product = _unitOfWork.Product.Get(x => x.Id == productVM.Product.Id);
+                //if (product == null)
+
+                    if (productVM.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(productVM.Product);
+                } 
+                else
+                {
+                    _unitOfWork.Product.Update(productVM.Product);
+                }
+                //_unitOfWork.Product.Add(productVM.Product);    // Keeping track of what needs to Add
                 _unitOfWork.Save();          // Creates a Product in Db
                 TempData["success"] = "Product Created successfully";
                 return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method

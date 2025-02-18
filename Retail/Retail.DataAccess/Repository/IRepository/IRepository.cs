@@ -9,9 +9,9 @@ namespace Retail.DataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        //T - Category
-        IEnumerable<T> GetAll();
-        T Get(Expression<Func<T, bool>> filter);//Linq Operator and filtering
+        //T - Category - Also getting Properties with includeProperties param
+        IEnumerable<T> GetAll(string? includeProperties = null);
+        T Get(Expression<Func<T, bool>> filter, string? includeProperties = null);//Linq Operator and filtering
         void Add(T entity);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entity);
