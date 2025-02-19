@@ -74,7 +74,7 @@ COMBINING CREATE & EDIT PAGES FOR product
 	public IActionResult Upsert(ProductVM productVM, IFormFile? file)
 
 RICH TEXT EDITOR
-16. Integrate TinyMCE
+16. Integrate TinyMCE (https://www.tiny.cloud/my-account/integrate/#html)
 17. Insert CDN JavaScript tag in html
 18. Use TextEditor JavaScript Tag in Product View PAGES
 
@@ -95,3 +95,45 @@ IWEWHOSTENVIRONMENT TO ACCESS LOCAL FILES, a built-in .NET FEATURE
 22. Get file path and combine
 23. Copy the file
 24. Save the FILE
+
+UPDATING THE IMAGE
+25. Check for the image FILE
+26. Delete the old Image with file path
+
+DATATABLES (SEARCH FUNCTIONALITY, SORTING, PAGINATION)
+27. Third-Party Plugin datatables.net (https://datatables.net/)
+28. Set Api call to retrive ObjProductList as JSON
+		#region API Calls
+			[HttpGet]
+			public IActionResult GetAll() 
+			{
+				List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
+				return Json(new { data = objProductList });
+
+			}
+        #endregion
+
+LOAD DATATABLES from Api
+29. Removed all Data table fromatting
+@* <tbody> *@
+			@* 	@foreach (var obj in Model) *@
+			@* 	{ *@
+			@* 		<tr> *@
+			@* 			<td>@obj.Title</td> *@
+			@* 			<td>@obj.ISBN</td> *@
+			@* 			<td>@obj.ListPrice</td> *@
+			@* 			<td>@obj.Author</td> *@
+			@* 			<td>@obj.Category.Name</td> *@
+			@* 			<td> *@
+			@* 				<div class="w-75 btn-group" role="group"> *@
+			@* 					<a asp-controller="Product" asp-action="Upsert" asp-route-id="@obj.Id" class="btn btn-primary mx-2"> *@
+			@* 						<i class="bi bi-pencil-square"></i> Edit *@
+			@* 					</a> *@
+			@* 					<a asp-controller="Product" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2"> *@
+			@* 						<i class="bi bi-journal-x"></i> Delete *@
+			@* 					</a> *@
+			@* 				</div> *@
+			@* 			</td> *@
+			@* 		</tr> *@
+			@* 	} *@
+			@* </tbody> *@

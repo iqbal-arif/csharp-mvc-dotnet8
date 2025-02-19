@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.JSInterop;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
 using Retail.Models.ViewModels;
@@ -201,38 +203,74 @@ namespace RetailWeb.Areas.Admin.Controllers
 
         //}
 
-        public IActionResult Delete(int? id)
+        //Deleted the previous Delete function as It is operated under API Class Section
+
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null || id == 0)
+        //    {
+        //        return NotFound();
+        //        //Add an Error page for Enduser
+        //    }
+        //    Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id); // Method-1: By ID only
+
+
+        //    if (productFromDb == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(productFromDb);
+        //}
+
+        //[HttpPost, ActionName("Delete")]
+        //public IActionResult DeletePOST(int? id)
+        //{
+        //    Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
+        //    if (obj == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    _unitOfWork.Product.Remove(obj);    // Keeping track of what needs to be deleted
+        //    _unitOfWork.Save();          // Updates a Product in Db
+        //    TempData["success"] = "Product Deleted successfully";
+
+        //    return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
+
+        //}
+
+        #region API CALLS
+
+        [HttpGet]
+        public IActionResult GetAll() 
         {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-                //Add an Error page for Enduser
-            }
-            Product? productFromDb = _unitOfWork.Product.Get(u => u.Id == id); // Method-1: By ID only
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
+            return Json(new { data = objProductList });
 
-
-            if (productFromDb == null)
-            {
-                return NotFound();
-            }
-            return View(productFromDb);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePOST(int? id)
+        } 
+        
+        public IActionResult Delete(int? id) 
         {
-            Product? obj = _unitOfWork.Product.Get(u => u.Id == id);
-            if (obj == null)
+            var productToBeDeleted = _unitOfWork.Product.Get(entity => entity.Id == id);
+
+            if(productToBeDeleted == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
-            _unitOfWork.Product.Remove(obj);    // Keeping track of what needs to be deleted
-            _unitOfWork.Save();          // Updates a Product in Db
-            TempData["success"] = "Product Deleted successfully";
 
-            return RedirectToAction("Index");  //Redirect to "Index" through IActionResult Method
+            var oldImagePath = 
+                        Path.Combine(_webHostEnvironment.WebRootPath, productToBeDeleted.ImageUrl.TrimStart('\\'));
 
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+
+            _unitOfWork.Product.Remove(productToBeDeleted);
+            _unitOfWork.Save();
+
+            return Json(new { success = true, message = "Delete Successful" });
 
         }
+        #endregion
     }
 }
