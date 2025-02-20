@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
-using RetailWeb.DataAccess.Data;
 using RetailWeb;
 using Retail.DataAccess.Repository;
+using Retail.DataAccess.Data;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace RetailWeb
@@ -18,6 +19,8 @@ namespace RetailWeb
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); /// Implementation of CategoryRepository

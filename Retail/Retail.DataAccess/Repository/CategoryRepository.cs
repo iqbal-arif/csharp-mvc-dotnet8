@@ -4,9 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Retail.DataAccess.Data;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
-using RetailWeb.DataAccess.Data;
 
 namespace Retail.DataAccess.Repository
 {

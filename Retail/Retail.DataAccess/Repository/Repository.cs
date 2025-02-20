@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Retail.DataAccess.Data;
 using Retail.DataAccess.Repository.IRepository;
-using RetailWeb.DataAccess.Data;
 
 namespace Retail.DataAccess.Repository
 {

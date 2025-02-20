@@ -2,7 +2,6 @@
 using Microsoft.Identity.Client;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
-using RetailWeb.DataAccess.Data;
 
 
 namespace RetailWeb.Areas.Admin.Controllers
