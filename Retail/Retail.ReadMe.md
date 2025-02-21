@@ -137,3 +137,40 @@ LOAD DATATABLES from Api
 			@* 		</tr> *@
 			@* 	} *@
 			@* </tbody> *@
+
+SWEETALERT WHEN DELETING
+30. SweetAlter2 https://sweetalert2.github.io/
+
+IDENTITY .NET CORE
+
+31. Install Microsoft.AspNetCore.Identity.EntityFrameworkCore version 8.0.13
+32. Add following Configurtion code as, Keys of Idendity tables are Mapped in the OnModelCreating in ApplicationDbContext
+        base.OnModelCreating(modelBuilder); 
+33. On Project File Add New Scaffolded Item. for Identity. This will make changes to the system files and logic files.
+34. Add "<IdentityUser>" to the following function.
+		public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+	And Delete
+	The second instance of ApplicationDbContext added in Identity folder created by Identity Framework
+35. Remove Email verificaiton option from Program.cs
+	The bottom code is left to to show Email verification Option IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) has be delete
+            //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+36. Add User Authentication in Program.cs
+            app.UseAuthentication();
+37. Removed Another Added Database Connection in appsettings.json 
+	"ApplicationDbContextConnection": "Server=(localdb)\\mssqllocaldb;Database=RetailWeb;Trusted_Connection=True;MultipleActiveResultSets=true"			
+38. Remove Data folder in Areas/Idendity/ as Data is already available
+39. Identity Framework creates Razor Pages related to Idendity.
+40. Add _LoginPartial.cshtml into _Layout.cshtml
+41. Add Service for Razor Pages to work in Program.cs
+            builder.Services.AddRazorPages();
+42. Add Razor Pages Mapping in Program.cs
+            app.MapRazorPages();	
+43. Adding Tables in SQL for Identity .net CORE
+	add-migration addIdentityTables
+	update-database
+44. Create ApplicationUser.cs Class for custom User Entity.
+45. Add DbSet for Application Users (Custom User Properties) in ApplicationDbContext.cs
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }	
+46. Run Migration
+	add-migration ExtendIdentityUser
+	update-database

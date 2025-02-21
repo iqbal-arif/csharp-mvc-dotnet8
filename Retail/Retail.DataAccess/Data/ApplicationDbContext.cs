@@ -17,6 +17,9 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     // Creates DataBase Table name as "Products"
     public DbSet<Product> Products { get; set; }
 
+    //Adding DbSet for Application Users (Custom User Properties)
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
     // Helper Function : ModelBuilder to seed data
     //ModelBuilder is in EF funciton used to Seed Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
