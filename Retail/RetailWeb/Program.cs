@@ -5,6 +5,8 @@ using RetailWeb;
 using Retail.DataAccess.Repository;
 using Retail.DataAccess.Data;
 using Microsoft.AspNetCore.Identity;
+using Retail.Utility;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 
 namespace RetailWeb
@@ -20,7 +22,7 @@ namespace RetailWeb
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             //The bottom code is left to to show Email verification Option IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) has be delete
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
@@ -28,6 +30,8 @@ namespace RetailWeb
             builder.Services.AddRazorPages();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); /// Implementation of CategoryRepository
+
+            builder.Services.AddScoped<IEmailSender, EmailSender>(); /// Implementation of EmailSender
 
             var app = builder.Build();
 

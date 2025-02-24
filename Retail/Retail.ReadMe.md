@@ -174,3 +174,101 @@ IDENTITY .NET CORE
 46. Run Migration
 	add-migration ExtendIdentityUser
 	update-database
+	
+ADDING APPLICATION User
+47. Modify IdentityUser to ApplicationUser in Registre.cshtml to create Application User
+	 private ApplicationUser CreateUser()
+	 {
+     try
+     {
+         return Activator.CreateInstance<ApplicationUser>();
+     }
+     catch
+	 
+Adding USER ROLES
+48. Adding Identity Role in Program.cs in replaciing the AddDefaultIdentity
+      builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+	  
+	  modifying to add AddIdentity with IdentityRole LOAD
+	  
+	  builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+49. Adding Varialbe Role Manager in Register Model
+        
+	  public readonly RoleManager<IdentityRole> _roleManager;
+	  
+50. ADDING ROLE USING Dependency Injection in Register.cs
+
+	        UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager, //Using Dependency Injector
+            IUserStore<IdentityUser> userStore,
+            SignInManager<IdentityUser> signInManager,
+            ILogger<RegisterModel> logger,
+            IEmailSender emailSender)
+			{
+				_roleManager = roleManager;
+				_userManager = userManager;
+51. Creating Role in Database after checking its existance in Get Handler in Register.cs	 
+	 
+	 public async Task OnGetAsync(string returnUrl = null)
+		{
+		if (!_roleManager.RoleExistsAsync(SD.Role_Customer).GetAwaiter().GetResult())
+		{
+			_roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
+			_roleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
+			_roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
+			_roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
+		}
+
+52. Creating Constant for Roles in RetailWeb.Utility SD.cs
+
+	namespace Retail.Utility
+	{
+		public static class SD
+		{
+			public const string Role_Customer = "Customer";
+			public const string Role_Company = "Company";
+			public const string Role_Admin = "Admin";
+			public const string Role_Employee = "Employee";
+		}
+	}
+       
+53. Add EmailSender Implementaion in Reatil.Utility as EmailSender.cs
+
+		public class EmailSender : IEmailSender
+		{
+			public Task SendEmailAsync(string email, string subject, string htmlMessage)
+				{
+				//Logic to Send Email
+				return Task.CompletedTask;
+				}
+		}
+54. Adding Service for EmailSender in Program.cs
+            builder.Services.AddScoped<IEmailSender, EmailSender>(); /// Implementation of EmailSender
+
+ADDING ROLE SELETION IN REGISTRAION PAGE
+55. Add Role Property in Register.cs for RegisterModels
+	//ROLE Property
+	public string? Role { get; set; }
+56. Add Role SelectList
+	[ValidateNever]
+	public IEnumerable<SelectListItem> RoleList { get; set; }	
+	
+57. Add Select list in Register View PAGE
+	<div class="form-floating mb-3">
+		<select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-control" ></select>
+	</div>
+	NOTE: "asp-for" uses @model by Default, but for "asp-items" @Model IS NEED TO BE SPECIFIED.
+	
+ASSIGNED ROLE ONPOST
+58. Assign Role ONPOST in Register.cs
+	if (!String.IsNullOrEmpty(Input.Role))
+	{
+		await _userManager.AddToRoleAsync(user, Input.Role);
+	}
+	else
+	{
+		await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+	}
+59. Add DefaultTokenProvider FOR Add IDENTITY in Program.cs Service Registery
+

@@ -51,7 +51,7 @@
 			C. In Package Manager Console: add a migration 
 			   (run command: add-migration AddCateoryTableToDb)
 			B. In Package Manager Console: 			
-			   (run Command: update-Database)
+			   (run Command: c)
 		CREATING CategoryController, Setting Link in _Layout
 		12. Create Controller: CategoryController.cs
 		13. Create Views: /Category/indexcshtml

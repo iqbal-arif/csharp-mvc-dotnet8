@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Retail.DataAccess\Retail.DataAccess.csproj" />
+    <ProjectReference Include="..\Retail.Utility\Retail.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
