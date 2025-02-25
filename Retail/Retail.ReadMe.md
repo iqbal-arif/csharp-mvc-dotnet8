@@ -256,7 +256,9 @@ ADDING ROLE SELETION IN REGISTRAION PAGE
 	
 57. Add Select list in Register View PAGE
 	<div class="form-floating mb-3">
-		<select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-control" ></select>
+		<select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select" >
+			<option disabled selected> - Select Role - </option>
+		</select>
 	</div>
 	NOTE: "asp-for" uses @model by Default, but for "asp-items" @Model IS NEED TO BE SPECIFIED.
 	
@@ -268,7 +270,42 @@ ASSIGNED ROLE ONPOST
 	}
 	else
 	{
-		await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+		await _userManager.AddToRoleAsync(user, SD.Role_Customer); // SD IS STATIC DETAILS
 	}
 59. Add DefaultTokenProvider FOR Add IDENTITY in Program.cs Service Registery
+
+	builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+60. ADDING AUTORIZAITON FOR Admin
+	1. Adding "@using Retail.Utility" in ALL "_ViewImports.cshtml, under Area/Admin/Views; Areas/Customer/Views; RetailWeb/Views/Shared and finally Identity/Pages
+	2. Adding Authorization Condition for Admin Elements in _Layout.cshtml
+		 @if(User.IsInRole(SD.Role_Admin))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Content Management
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item">
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    </ul>
+                                </li>
+                            }
+    
+	3. Add [Authorize(Roles =SD.Role_Admin)]in CategoryController and ProductController to avoid URL access to those pages.
+61. REDIRECT TO ACCESS DENIED PAGES
+	Add the Services in Program.cs after IDENTITY CORE Service
+	//Access Denied Page Redirect
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LoginPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
+
+	
 

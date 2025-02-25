@@ -1,14 +1,18 @@
 ﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.JSInterop;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
 using Retail.Models.ViewModels;
+using Retail.Utility;
 
 namespace RetailWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
+
     public class ProductController : Controller
     {
        

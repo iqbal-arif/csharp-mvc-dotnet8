@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
+using Retail.Utility;
 
 
 namespace RetailWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =SD.Role_Admin)]
     public class CategoryController : Controller
     {
         // Field to retrieve db object
