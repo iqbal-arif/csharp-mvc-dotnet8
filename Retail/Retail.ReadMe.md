@@ -307,5 +307,63 @@ ASSIGNED ROLE ONPOST
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
 
-	
+62. ADDING ATTRIBUTES IN REGISTER.cs
+		//Adding Fields that are added through in DB in Identity Core Installation
+            public string? StreetAddress { get; set; }
+            public string? City { get; set; }
+            public string? State { get; set; }
+            public string? PostalCode { get; set; }
+            public string? PhoneNumber { get; set; }
+63. ADDING USER PROPERTIES IN CREATING A NEW User In REGISTER.cshtml.cs
+    1. Adding Properties to be created in OnPostAsynce for CreateUser() function as follows;
+		public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        {
+            returnUrl ??= Url.Content("~/");
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            if (ModelState.IsValid)
+            {
+                var user = CreateUser();
 
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.StreetAddress = Input.StreetAddress;
+                user.City = Input.City;
+                user.Name = Input.Name;
+                user.State = Input.State;
+                user.PostalCode = Input.PostalCode;
+                user.PhoneNumber = Input.PhoneNumber;
+                var result = await _userManager.CreateAsync(user, Input.Password);
+
+    2. Adding Fileds for the Properties in REGISTER.cshtml.cs
+	   
+	   public class InputModel
+        {
+            /// <summary>
+            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///     directly from your code. This API may change or be removed in future releases.
+            /// </summary>
+            [Required]
+            [EmailAddress]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+             .
+			 .
+			 .
+			 .
+			 .
+            [ValidateNever]
+            public IEnumerable<SelectListItem> RoleList { get; set; }
+
+            //Adding Fields that are added through in DB in Identity Core Installation
+            [Required]
+            public string? Name { get; set; }
+            public string? StreetAddress { get; set; }
+            public string? City { get; set; }
+            public string? State { get; set; }
+            public string? PostalCode { get; set; }
+            public string? PhoneNumber { get; set; }
+
+        }
+	3. Modify in ApplicationUser.cs The Name Type Int to String
+	4. Run add-migration UpdateNameToBeStringApplicaitonUser To Update the Type in Db
+	5.Uupdate-Database
