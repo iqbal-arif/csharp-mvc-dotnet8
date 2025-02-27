@@ -10,7 +10,7 @@ using Retail.Models;
 
 namespace Retail.DataAccess.Repository
 {
-    public class CompanyRepository: Repository<Category>, ICategoryRepository
+    public class CompanyRepository : Repository<Company>, ICompanyRepository
     {
         private ApplicationDbContext _db;
 
@@ -21,9 +21,9 @@ namespace Retail.DataAccess.Repository
         }
 
         
-        public void Update(Category obj)
+        public void Update(Company obj)
         {
-            _db.Categories.Update(obj);
+            _db.Companies.Update(obj);
         }
     }
 }

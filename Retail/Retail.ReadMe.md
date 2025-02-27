@@ -367,3 +367,37 @@ ASSIGNED ROLE ONPOST
 	3. Modify in ApplicationUser.cs The Name Type Int to String
 	4. Run add-migration UpdateNameToBeStringApplicaitonUser To Update the Type in Db
 	5.Uupdate-Database
+
+64. ADDING COMPANY Role
+	
+	1. Create Company.cs Model under Retail.Models with all the parameters
+		namespace Retail.Models
+		{
+			public class Company
+			{
+				public int Id { get; set; }
+				[Required]
+				public string? Name { get; set; }
+				public string? StreetAddress { get; set; }
+				public string? City { get; set; }
+				public string? State { get; set; }
+				public string? PostalCode { get; set; }
+				public string? PhoneNumber { get; set; }
+			}
+		}
+	2. Add it to DbSet in ApplicationDbContext
+		// Creates DataBase Table name as "Company"
+			public DbSet<Company> Companies { get; set; }
+	3. Updating the Database 
+		a. add-migration addCompanyTable  Default Project: Retail.DataAccess
+		b. Update-Database
+	4. Create CompanyRepository
+	5. Create ICompanyRepository
+	6. Add ICompanyRepository to IUnitOfWork
+	7. Add ICompanyRepository field and create of Comapny instance in UnitOfWork
+	8. Create CompanyController.cs under Areas/Admin/Controllers
+	
+	
+	
+	
+

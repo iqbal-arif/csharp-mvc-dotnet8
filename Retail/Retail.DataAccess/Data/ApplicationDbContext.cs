@@ -16,6 +16,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     // Creates DataBase Table name as "Products"
     public DbSet<Product> Products { get; set; }
+    
+    // Creates DataBase Table name as "Company"
+    public DbSet<Company> Companies { get; set; }
+
+
 
     //Adding DbSet for Application Users (Custom User Properties)
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
