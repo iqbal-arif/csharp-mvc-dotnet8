@@ -403,7 +403,39 @@ ASSIGNED ROLE ONPOST
 	12. add-migration addCompanyRecords
 	13. update-database
 	14. Creating Reationship between User and Company
-	
+		14.1. Add CompanyId variable in ApplicationUser.cs
+				public string? CompanyId { get; set; } // Foreingn Key Relationship for the USER with COMPANY
+				[ForeignKey("CompanyId")]
+				[ValidateNever]
+				public Company Company { get; set; }
+		14.2 add-migration addCompanyToUser
+		14.3 update-database
+		14.4 Adding a List of Company in The Registration Page; Populate the register dropdown and pass it Razor Page.
+			public RegisterModel(.....IUnitOfWork unitOfWork)
+			{_unitOfWork = unitOfWork;}
+		14.5 Add CompanyId into the Model Register.cshmtl
+			A. //Adding Fields that are added through in DB in Identity Core Installation
+			public int? CompanyId { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> CompanyList { get; set; }
+			B. //Adding CompnayList
+			Input = new()
+            {
+                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem{
+                    Text = i,
+                    Value = i
+                }),
+                CompanyList = _unitOfWork.Compnay.GetAll().Select(i => new SelectListItem{
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+			C. Add JavaScript for Toggle CompanyList if Role is company
+			D. Add Particular Company Id When User Register as Company and select a particular company.
+				if(Input.Role == SD.Role_Company)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
 	
 	
 

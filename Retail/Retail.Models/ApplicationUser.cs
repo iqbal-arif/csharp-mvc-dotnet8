@@ -20,7 +20,7 @@ namespace Retail.Models
         public string? State { get; set; }
         public string? PostalCode { get; set; }
 
-        public string? CompanyId { get; set; } // Foreingn Key Relationship for the USER with COMPANY
+        public int? CompanyId { get; set; } // Foreingn Key Relationship for the USER with COMPANY
         [ForeignKey("CompanyId")]
         [ValidateNever]
         public Company Company { get; set; }
