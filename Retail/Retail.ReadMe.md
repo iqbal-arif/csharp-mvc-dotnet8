@@ -398,6 +398,11 @@ ASSIGNED ROLE ONPOST
 	8. Create CompanyController.cs under Areas/Admin/Controllers
 		To open Find and Replace widget Ctrl+Shift+F
 	9. Creat Company View (Add Index.cshmtl, Add Upsert.cshmtl, Add company.js)
+	10. Add the Company Menu in the Naviation Menu in _Layout.cshtml
+	11. Add Comapny Seed in AplicationDbContext.cs FILE
+	12. add-migration addCompanyRecords
+	13. update-database
+	14. Creating Reationship between User and Company
 	
 	
 	

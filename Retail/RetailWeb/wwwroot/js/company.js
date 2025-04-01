@@ -11,7 +11,8 @@ function loadDataTable() {
             { data: 'name', "width" : "15%"},
             { data: 'streetAddress', "width": "15%" },
             { data: 'city', "width": "15%" },
-            { data: 'state', "width": "15%" },
+            { data: 'state', "width": "5%" },
+            { data: 'postalCode', "width": "10%" },
             { data: 'phoneNumber', "width": "15%" },
             {
                 data: "id",
