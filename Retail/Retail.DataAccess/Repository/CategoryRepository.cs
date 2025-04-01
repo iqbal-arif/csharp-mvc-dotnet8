@@ -10,11 +10,11 @@ using Retail.Models;
 
 namespace Retail.DataAccess.Repository
 {
-    public class CompanyRepository: Repository<Category>, ICategoryRepository
+    public class CategoryRepository: Repository<Category>, ICategoryRepository
     {
         private ApplicationDbContext _db;
 
-        public CompanyRepository(ApplicationDbContext db)
+        public CategoryRepository(ApplicationDbContext db)
             :base(db) 
         {
             _db = db;

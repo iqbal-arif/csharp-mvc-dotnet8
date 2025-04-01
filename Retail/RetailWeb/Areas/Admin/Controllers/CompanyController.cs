@@ -18,8 +18,9 @@ namespace RetailWeb.Areas.Admin.Controllers
        
         private readonly IUnitOfWork _unitOfWork;
 
+
         
-        public CompanyController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+        public CompanyController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

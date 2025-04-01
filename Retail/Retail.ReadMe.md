@@ -396,7 +396,8 @@ ASSIGNED ROLE ONPOST
 	6. Add ICompanyRepository to IUnitOfWork
 	7. Add ICompanyRepository field and create of Comapny instance in UnitOfWork
 	8. Create CompanyController.cs under Areas/Admin/Controllers
-	
+		To open Find and Replace widget Ctrl+Shift+F
+	9. Creat Company View (Add Index.cshmtl, Add Upsert.cshmtl, Add company.js)
 	
 	
 	

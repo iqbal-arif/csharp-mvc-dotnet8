@@ -38,6 +38,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             new Category { Id = 3, Name = "History", DisplayOrder = 3 }
             );
 
+        modelBuilder.Entity<Company>().HasData(
+            new Company { Id = 1, Name = "Tech Solution", StreetAddress = "123 Tech St", City = "Tech City", PostalCode = "12121", State = "IL", PhoneNumber = "1235264586" },
+            new Company { Id = 2, Name = "Vivid Books", StreetAddress = "999 vid St", City = "Vid City", PostalCode = "66653", State = "IL", PhoneNumber = "6328758965" },
+            new Company { Id = 3, Name = "Reader Club", StreetAddress = "758 Main St", City = "Lala Land", PostalCode = "99685", State = "NY", PhoneNumber = "4529687458" }
+            
+            );
         modelBuilder.Entity<Product>().HasData(
             new Product
             {
