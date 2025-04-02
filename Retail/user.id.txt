@@ -1,0 +1,9 @@
+admin@retail.com \ R3tail1234!
+
+companyUser@retail.com \ newUser123!
+
+customer2@retail.com \ Cust0mer1234!
+
+customer@retail.com \ Cust0mer1234!
+
+employee@retail.com \ Empl0yee1234!

@@ -21,7 +21,7 @@ namespace Retail.Models
 
         public int Count { get; set; }
 
-        public string ApplicaitonUserId { get; set; }
+        public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }

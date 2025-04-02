@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Retail.DataAccess.Data;
 using Retail.DataAccess.Repository.IRepository;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Retail.DataAccess.Repository
 {
@@ -33,10 +34,19 @@ namespace Retail.DataAccess.Repository
             //_db.Categories.Add(some entity);
             dbSet.Add(entity); 
         }
-
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        //Set tracked property to false to stop EF Core auto tracking
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = dbSet;
+
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query= dbSet;
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+            }
 
             query = query.Where(filter);
 

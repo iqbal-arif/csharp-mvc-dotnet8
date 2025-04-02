@@ -31,7 +31,7 @@ namespace RetailWeb.Areas.Customer.Controllers
         {
             ShoppingCart cart = new()
             {
-                Product = _unitOfWork.Product.Get(detail => detail.Id == productId, includeProperties: "Category"),
+                Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category"),
                 Count = 1,
                 ProductId = productId
             };
@@ -45,11 +45,29 @@ namespace RetailWeb.Areas.Customer.Controllers
             //To Get User Id through Helper method ClaimsIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserId = userId;
 
-            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            //Checking for UserId and ProductId IN Db before making any Entry
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+
+            if (cartFromDb != null) 
+            {
+                //Shopping Cart Exists
+                cartFromDb.Count += shoppingCart.Count;
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            else
+            {
+                //Adding new Record
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
+
+            }
+
+            TempData["success"] = "Cart updated successfully";
+
             _unitOfWork.Save();
 
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()
