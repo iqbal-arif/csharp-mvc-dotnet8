@@ -437,5 +437,30 @@ ASSIGNED ROLE ONPOST
                     user.CompanyId = Input.CompanyId;
                 }
 	
-	
+65. ADDING SHOPPINGCART Model in Retail.ModelState
+66. ADDING Db for SHOPPINGCART in AplicationDbContext
+67. add-migration addShoppingCartToDb
+68. CREATE IRepository, Repository for SHOPPINGCART AND Add to UnitOfWork
+69. CREATE IRepository, Repository for ApplicationUser AND Add to UnitOfWork
+70. Modify Customer Detial View to reflect Product and its Count in Areas/Customer/Views/Home/Details.cshmtl
+71. ADD SHOPPINGCART VIEW in Customer/Controller/HomeController.cs file.
+	 public IActionResult Details(int productId)
+        {
+            ShoppingCart cart = new()
+            {
+                Product = _unitOfWork.Product.Get(detail => detail.Id == productId, includeProperties: "Category"),
+                Count = 1,
+                ProductId = productId
+            };
+            return View(cart);
+        }
+72	ADD TO CART:
+	72.1: Add a hidden filed in Customer Detail page to get Product id That will be needed to upadte or enter the product.
+		<form method="post">
+		@* Hidden Id will be used or populated with Product is updated in the shoppinngcart.  *@
+		<input hidden asp-for= "ProductId" /> 
+	72.2: Getting User ID in HomeController that will be populated during Login process.
+		//To Get User Id through Helper method ClaimsIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 

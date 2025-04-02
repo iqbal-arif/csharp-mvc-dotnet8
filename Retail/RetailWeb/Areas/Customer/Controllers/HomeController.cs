@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retail.DataAccess.Repository;
 using Retail.DataAccess.Repository.IRepository;
@@ -27,8 +29,27 @@ namespace RetailWeb.Areas.Customer.Controllers
         
         public IActionResult Details(int productId)
         {
-            Product product = _unitOfWork.Product.Get(detail => detail.Id == productId, includeProperties:"Category");
-            return View(product);
+            ShoppingCart cart = new()
+            {
+                Product = _unitOfWork.Product.Get(detail => detail.Id == productId, includeProperties: "Category"),
+                Count = 1,
+                ProductId = productId
+            };
+            return View(cart);
+        }
+
+        [HttpPost]
+        [Authorize] //This keyword is used for user that is autorized to updated the product
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            //To Get User Id through Helper method ClaimsIdentity
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            _unitOfWork.ShoppingCart.Add(shoppingCart);
+            _unitOfWork.Save();
+
+            return View();
         }
 
         public IActionResult Privacy()
