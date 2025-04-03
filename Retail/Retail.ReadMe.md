@@ -463,4 +463,47 @@ ASSIGNED ROLE ONPOST
 		//To Get User Id through Helper method ClaimsIdentity
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+73	ADD ORDER CONFIRMATION: 
+	73.1: add-migration addOrderHeaderAndDetailsToDb
 
+74. ADD ORDER HEADER & DETAIL TO Repository
+
+	74.1: Add IOrderHeaderRepository & IOrderDetailRepository
+	74.2: Add Repository Implementaion OrderHeaderRepository & OrderDetailRepository
+	74.3: Add the IOrderHeaderRepository & IOrderDetailRepository to IUnitOfWork
+	74.4: Add the IOrderHeaderRepository & IOrderDetailRepository to UnitOfWork and Initialize them.
+	74.5: Adding OrderHeader in the ShoppingCartVm
+			public OrderHeader OrderHeader { get; set; }
+75. SUMMARY GET ACTION METHOD
+	75.1: Populating ShoppingCartVm.OrderHeader.ApplicationUser Details
+	
+	        public IActionResult Summery()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            ShoppingCartVM = new()
+            {
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+                    includeProperties: "Product"),
+                OrderHeader = new()
+            };
+
+            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+
+            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
+            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+            ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
+            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
+            ShoppingCartVM.OrderHeader.State = ShoppingCartVM.OrderHeader.ApplicationUser.State;
+            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
+
+
+            foreach (var cart in ShoppingCartVM.ShoppingCartList)
+            {
+                cart.Price = GetPriceBasedOnQuantity(cart);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+
+            return View(ShoppingCartVM);
+        }

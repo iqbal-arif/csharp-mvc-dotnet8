@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Retail.Models
 {
-    public class OrderDetails
+    public class OrderDetail
     {
         public int Id { get; set; }
         [Required]
