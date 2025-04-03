@@ -10,7 +10,7 @@ namespace Retail.DataAccess.Repository.IRepository
     public interface IRepository<T> where T : class
     {
         //T - Category - Also getting Properties with includeProperties param
-        IEnumerable<T> GetAll(string? includeProperties = null);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null);
         T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false);//Linq Operator and filtering 
         // added bool tracked = false to stop EFC auto-tracking feature that will update in DB automatically
         void Add(T entity);

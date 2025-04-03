@@ -22,11 +22,19 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     
     // Creates DataBase Table name as "ShoppingCarts"
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
-
-
+    
 
     //Adding DbSet for Application Users (Custom User Properties)
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+    // Creates DataBase Table name as "OrderHeaders"
+    public DbSet<OrderHeader> OrderHeaders { get; set; }
+    
+    // Creates DataBase Table name as "OrderDetails"
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+
+
+
 
     // Helper Function : ModelBuilder to seed data
     //ModelBuilder is in EF funciton used to Seed Data
