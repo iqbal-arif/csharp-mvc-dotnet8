@@ -13,5 +13,6 @@ namespace Retail.Models.ViewModels
         // Adding OrderHeader in the ShoppingCartVm
         public OrderHeader OrderHeader { get; set; }
 
+
     }
 }
