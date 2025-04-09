@@ -588,7 +588,10 @@ ASSIGNED ROLE ONPOST
                 service.Create(options);
 
             }
-		
+
+78. ORDER MANAGEMENT TO SET ORDER STATUS AND PROCESS SHIPPING
+
+	78.1. ORDER Controller
 	
 		
 
