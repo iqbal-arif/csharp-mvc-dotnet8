@@ -73,7 +73,7 @@ namespace RetailWeb.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        [ActionName("Summary")]
+        [ActionName("Summery")]
         public IActionResult SummaryPost() //The BindingProperty will populate the values, so parameters are not required
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;

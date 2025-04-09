@@ -7,6 +7,7 @@ using Retail.DataAccess.Data;
 using Microsoft.AspNetCore.Identity;
 using Retail.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Stripe;
 
 
 namespace RetailWeb
@@ -21,6 +22,9 @@ namespace RetailWeb
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //Injecting Stripe Keys into StripeSettings.cs
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
             // Identity Core (Login, Logout)
             builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
@@ -60,6 +64,10 @@ namespace RetailWeb
             //Adding User Authentication
             app.UseAuthentication();
             app.UseAuthorization();
+
+
+            //Stripe API Key Configuration
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
             //Razor Pages Mapping
             app.MapRazorPages();

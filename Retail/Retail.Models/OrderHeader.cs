@@ -32,6 +32,10 @@ namespace Retail.Models
 
         public DateTime PaymentDate { get; set; }
         public DateOnly PaymentDueDate { get; set; }
+
+        //ID's used in Stripe Payment System
+        //Stripe gives a Payment intent Id when the sessionis successful
+        public string? SessionId { get; set; }
         public string? PaymentIntentId {  get; set; }
 
         [Required]
