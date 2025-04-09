@@ -4,6 +4,7 @@ using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
 using Retail.Models.ViewModels;
 using Retail.Utility;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace RetailWeb.Areas.Customer.Controllers
@@ -143,7 +144,66 @@ namespace RetailWeb.Areas.Customer.Controllers
             {
                 //It is a Regular Customer Account and we need to capture payment
                 //Stripe Logic
-               
+
+                //Variable for URL
+                var domain = "https://localhost:7113/";
+
+                var options = new Stripe.Checkout.SessionCreateOptions
+                {
+                    //URl = doamin + navigate to Customer Area , Cart Controller, and Action OrderConfirmation
+                    SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+
+                    //Redirecting to Index Page Customer Shopping Cart for Canncelled URL
+                    CancelUrl = domain + "customer/cart/index",
+
+                    //All Product Detail in LineItems
+                    LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
+
+                    Mode = "payment",
+                };
+
+                //Generating Item List; if 10 items in the Cart it will iterate 10 times
+
+                foreach(var item in ShoppingCartVM.ShoppingCartList)
+                {
+                    var sessionLineItem = new SessionLineItemOptions //this is build-in class in stripe package
+                    {
+                        //Creating new Price Object with PriceData
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(item.Price * 100), // $20.50 => 2050
+                            Currency = "usd",
+                            //SessionLineItemPriceDataProductDataOptions build-in class in stripe packag
+                            //Gives the Name, Description, and Images of each Item
+
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = item.Product.Title
+                            }
+                        },
+                        //Quantity per Item
+                        Quantity = item.Count
+                    };
+
+                    options.LineItems.Add(sessionLineItem);
+                }
+
+
+
+
+                var service = new Stripe.Checkout.SessionService();
+
+                Session session = service.Create(options);
+
+                //Update PaymentIntentId before Redirecting to the page
+                _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id,session.Id,session.PaymentIntentId);
+
+                _unitOfWork.Save();
+
+                //Redirecting to new URL
+                Response.Headers.Add("Location", session.Url); //Provided by Stripe
+                return new StatusCodeResult(303); //Meaning redirecting to new URL
+
             }
 
             return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartVM.OrderHeader.Id});
@@ -154,6 +214,36 @@ namespace RetailWeb.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int id)
         {
+            //Based on Id retriving the Order Header
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
+
+            if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
+            {
+                //This is an Order by Customer
+
+                var service = new SessionService();
+
+                //Getting Payment status for Stripe Build-in SessionService class
+
+                Session session = service.Get(orderHeader.SessionId);
+
+                if (session.PaymentStatus.ToLower() == "paid")
+                {
+                    //Update PaymentIntentId before Redirecting to the page
+                    _unitOfWork.OrderHeader.UpdateStripePaymentID(id, session.Id, session.PaymentIntentId);
+                    _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
+
+                    _unitOfWork.Save();
+                }
+            }
+
+
+            //Emptying the Shopping Cart
+
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
+
             return View(id);
         }
 

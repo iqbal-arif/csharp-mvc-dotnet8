@@ -507,3 +507,88 @@ ASSIGNED ROLE ONPOST
 
             return View(ShoppingCartVM);
         }
+76......Fill the topic namespace
+
+77. STRIPE SETUP
+	77.1. Setup Stripe Account
+	77.2. Set Public and Secret Key in appsettings.JSON
+	77.3. Write StripeSettings.cs class in Retail.Utility and set Two Key Properties.
+	77.4. At RetailWeb level add Stripe module through Nuget Package.
+	77.5. Configuring the API-Key to bring the Stripe Secret Keys
+			 //Injecting Stripe Keys into StripeSettings.cs
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+			//Stripe API Key Configuration
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+	77.6. add-migration addSessionIdToOrderHeader
+	77.7 Custom Helper METHOD to set order status and payment status. Create UpdateStatus in IOrderHeaderRepository
+			void UpdateStatus(int id,string orderStatus, string? paymentStatus = null);
+			void UpdateStripePaymentID(int id,string sessionId, string paymentIntenId);
+	77.7. IMPLEMENT the method in OrderHeaderRepository
+			//Updating Status
+        public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+        {
+            //Retrive OrderHeader from DB based on ID and Update OrderStatus
+            var orderFromDb = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
+            if (orderFromDb != null)
+            {
+                //Order Status
+                orderFromDb.OrderStatus = orderStatus;
+
+                //Payment Status
+                if (!string.IsNullOrEmpty(paymentStatus))
+                {
+                    orderFromDb.PaymentStatus = paymentStatus;
+                }
+
+            }
+        }
+        
+        //Payment Intent ID  and Session Id
+        //Session Id is generated at payment attempt, upon successful status then Payment Intent Id is generated
+        public void UpdateStripePaymentID(int id, string sessionId, string paymentIntenId)
+        {
+            var orderFromDb = _db.OrderHeaders.FirstOrDefault(x => x.Id == id);
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                orderFromDb.SessionId = sessionId;
+            }
+            if (!string.IsNullOrEmpty(paymentIntenId))
+            {
+                orderFromDb.PaymentIntentId = paymentIntenId;
+                //and update the date of payment 
+                orderFromDb.PaymentDate = DateTime.Now;
+            }
+        }
+	77.8: Copy the Stripe CheckOut Session METHOD from Stripe API Documentation
+	77.9: Set URL for the Build for now and route it to OrderConfirmation page in CartController.cs
+			//Capture Payment for Regular Customer
+            if (applicationUser.CompanyId.GetValueOrDefault() == 0)
+            {
+                //It is a Regular Customer Account and we need to capture payment
+                //Stripe Logic
+
+                //Variable for URL
+                var domain = "https://localhost:7113/";
+                var options = new Stripe.Checkout.SessionCreateOptions
+                {
+                    //URl = doamin + navigate to Customer Area , Cart Controller, and Action OrderConfirmation
+                    SuccessUrl = domain+ $"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+                    LineItems = new List<Stripe.Checkout.SessionLineItemOptions>
+                    {
+                        new Stripe.Checkout.SessionLineItemOptions
+                        {
+                            Price = "price_1MotwRLkdIwHu7ixYcPLm5uZ",
+                            Quantity = 2,
+                        },
+                    },
+                    Mode = "payment",
+                };
+                var service = new Stripe.Checkout.SessionService();
+                service.Create(options);
+
+            }
+		
+	
+		
+
