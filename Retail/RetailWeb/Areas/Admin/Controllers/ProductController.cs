@@ -11,7 +11,7 @@ using Retail.Utility;
 namespace RetailWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin)]
 
     public class ProductController : Controller
     {

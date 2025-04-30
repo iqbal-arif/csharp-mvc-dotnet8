@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Retail.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
+using Microsoft.EntityFrameworkCore.Internal;
+using Retail.DataAccess.DbInitializer;
 
 
 namespace RetailWeb
@@ -40,6 +42,18 @@ namespace RetailWeb
             //The bottom code is left to to show Email verification Option IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) has be delete
             //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
+            //Session Setup
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(100);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            // IDBInitializer Service Registration
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
             builder.Services.AddRazorPages();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); /// Implementation of CategoryRepository
@@ -65,6 +79,11 @@ namespace RetailWeb
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //Session Configuration
+            app.UseSession();
+
+            //Invoking DbInitializer
+            SeedDatabase();
 
             //Stripe API Key Configuration
             StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
@@ -78,6 +97,18 @@ namespace RetailWeb
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+
+
+
+            void SeedDatabase()
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+                    dbInitializer.Initialize();
+                }
+            }
+
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Retail.DataAccess.Repository;
 using Retail.DataAccess.Repository.IRepository;
 using Retail.Models;
+using Retail.Utility;
 
 namespace RetailWeb.Areas.Customer.Controllers
 {
@@ -23,6 +24,15 @@ namespace RetailWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            //Getting User ID
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (claim != null)
+            {
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                   _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).Count());
+            }
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"Category");
             return View(productList);
         }
@@ -55,11 +65,17 @@ namespace RetailWeb.Areas.Customer.Controllers
                 //Shopping Cart Exists
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
             }
             else
             {
                 //Adding new Record
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                //Save the Record
+                _unitOfWork.Save();
+                //Adding Session for ShoppingCart
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
 
             }
 

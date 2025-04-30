@@ -28,5 +28,8 @@ namespace Retail.Utility
         public const string PaymentStatusApproved = "Approved";
         public const string PaymentStatusDelayedPayment = "ApprovedForDelayedPayment";
         public const string PaymentStatusRejected = "Rejected";
+
+        //For Session (ShoppingCart)
+        public const string SessionCart = "SessionShoppingCart";
     }
 }

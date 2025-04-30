@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Retail.Models\Retail.Models.csproj" />
+    <ProjectReference Include="..\Retail.Utility\Retail.Utility.csproj" />
   </ItemGroup>
 
 </Project>

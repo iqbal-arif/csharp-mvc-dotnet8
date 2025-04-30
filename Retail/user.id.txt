@@ -7,3 +7,7 @@ customer2@retail.com \ Cust0mer1234!
 customer@retail.com \ Cust0mer1234!
 
 employee@retail.com \ Empl0yee1234!
+
+employee2@retail.com \ Empl0yee1234!
+
+employee3@retail.com \ Empl0yee1234!
